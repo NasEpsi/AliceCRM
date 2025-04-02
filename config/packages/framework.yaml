@@ -1,7 +1,9 @@
 # see https://symfony.com/doc/current/reference/configuration/framework.html
 framework:
     secret: '%env(APP_SECRET)%'
-    #csrf_protection: true
+    csrf_protection: true
+    form:
+        enabled: true
     http_method_override: false
     handle_all_throwables: true
     # Custom error page
@@ -18,7 +20,7 @@ framework:
 
     #esi: true
     #fragments: true
-    php_errors:
+    php_errors: 
         log: true
 
 when@test:
