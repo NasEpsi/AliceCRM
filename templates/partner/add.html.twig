@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un client{% endblock %}
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
+
+
+{% block body %}
+    <h1>Ajouter un client pour le partenaire "{{ partner.name }}"</h1>
+
+    <div>
+        <!-- Choisir un client existant -->
+        <h3>Choisir un client existant</h3>
+        <form class="form" method="get">
+            <select class="form-select" name="existingCustomer">
+                <option value="">Choisir un client existant</option>
+                {% for customer in existingCustomers %}
+                    <option value="{{ customer.id }}">{{ customer.name }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn-alice-form">Associer ce client</button>
+        </form>
+    </div>
+
+    <br>
+
+    <!-- Créer un nouveau client -->
+    <h3>Créer un nouveau client</h3>
+    <div class="form">
+    {% if form %}
+        {{ form_start(form) }}
+            {{ form_row(form.name) }}
+            {{ form_row(form.siret) }}
+            {{ form_row(form.address) }}
+            {{ form_row(form.zipCode) }}
+            {{ form_row(form.city) }}
+            {{ form_row(form.country) }}
+            {{ form_row(form.isProfessional) }}
+            {{ form_row(form.isPartner) }}
+            {{ form_row(form.tariffZone) }}
+        {{ form_end(form) }}
+    {% endif %}
+    <form action="{{ path('app_partner_list') }}" method="get">
+        <button type="submit" class="btn-alice-form">Passer cette étape</button>
+    </form>
+    </div>
+
+
+{% endblock %}

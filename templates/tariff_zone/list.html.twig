@@ -14,7 +14,7 @@
     
     {% if tariff_zones is not empty %}
 
-        
+        <p>Ajouter une nouvelle zone tarifaire en fonction de la localisation du client</p>        
         <div class="d-flex justify-content-center justify-content-lg-end">
             <a href="{{ path('app_tariff_zone_new') }}" class="btn btn-alice">Nouvelle Zone</a>
         </div>
@@ -45,6 +45,7 @@
         </table>
     {% else %}
         <h4 class="mb-5">Aucune Zone Tarifaire définie</h4>
+        <p>Ajouter une nouvelle zone tarifaire en fonction de la localisation du client</p>
             <div class="d-flex flex-column flex-md-row col-12 justify-content-around">
                 <div class="card col-md-5 bgg-alice-light m-2">
                     <div class="d-flex flex-column align-items-center card-body justify-content-between">

@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Customer;
 use App\Entity\Partner;
+use App\Form\CustomerType;
 use App\Form\PartnerType;
 use App\Repository\PartnerRepository;
 use App\Repository\CustomerRepository;
@@ -10,6 +12,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
 
 #[Route('/admin/partenaire')]
 class PartnerController extends AbstractController
@@ -51,7 +55,7 @@ class PartnerController extends AbstractController
                 'La création du nouveau partenariat est bien enregistrée.'
             );
 
-            return $this->redirectToRoute('app_partner_list', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_customer_add', ['partnerId' => $partner->getId()]);
         }
 
         return $this->render('partner/new.html.twig', [
@@ -99,4 +103,51 @@ class PartnerController extends AbstractController
 
         return $this->redirectToRoute('app_partner_list', [], Response::HTTP_SEE_OTHER);
     }
+    
+    #[Route('/ajouter/clients/{partnerId}', name: 'app_customer_add', methods: ['GET', 'POST'])]
+    public function customerAdd(Request $request,?string $partnerId = null ): Response
+    {
+        if ($partnerId) {
+            $partner = $this->partnerRepository->find($partnerId);
+    
+            if (!$partner) {
+                throw $this->createNotFoundException("Le partenariat avec l'ID $partnerId n'existe pas.");
+            }
+        } else {
+            $partner = null;
+        }
+
+        // Si un client existant est sélectionné
+        if ($request->get('existingCustomer')) {
+            $existingCustomer = $this->customerRepository->find($request->get('existingCustomer'));
+            if ($existingCustomer) {
+                $existingCustomer->setPartner($partner);  // Associer le client au partenariat
+                $this->customerRepository->save($existingCustomer, true);
+
+                $this->addFlash('success', 'Le client a bien été associé au partenariat.');
+                return $this->redirectToRoute('app_partner_list');
+            }
+        }
+
+        // Formulaire pour créer un nouveau client
+        $customer = new Customer();
+        $customer->setPartner($partner); // Lier le client au partenaire
+        $customerForm = $this->createForm(CustomerType::class, $customer);
+        $customerForm->handleRequest($request);
+
+        if ($customerForm->isSubmitted() && $customerForm->isValid()) {
+            $this->customerRepository->save($customer, true);
+            $this->addFlash('success', 'Le client a été créé avec succès.');
+
+            return $this->redirectToRoute('app_partner_list');
+        }
+
+        return $this->render('partner/add.html.twig', [
+            'form' => $customerForm->createView(),
+            'partner' => $partner,
+            'existingCustomers' => $this->customerRepository->findBy([]), 
+        ]);
+    }
+
+
 }
