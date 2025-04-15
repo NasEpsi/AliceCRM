@@ -16,7 +16,7 @@ class TariffZoneType extends AbstractType
     {
         $builder
             ->add('name', TextType::class, [
-                'label' => 'Périmètre'
+                'label' => 'Nom de la zone'
             ])
             ->add('amount', MoneyType::class, [
                 'label' => 'Montant'
