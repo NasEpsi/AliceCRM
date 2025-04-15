@@ -117,7 +117,6 @@ class PartnerController extends AbstractController
             $partner = null;
         }
 
-        // Si un client existant est sélectionné
         if ($request->get('existingCustomer')) {
             $existingCustomer = $this->customerRepository->find($request->get('existingCustomer'));
             if ($existingCustomer) {
